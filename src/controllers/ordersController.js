@@ -1,9 +1,32 @@
 const db = require('../config/db');
+const { formatAddress, paymentOptions } = require('./accountController');
 
 exports.createOrder = (req, res) => {
-  const { items, total_amount } = req.body;
+  const { items, total_amount, delivery_address, payment_method } = req.body;
   if (!items || items.length === 0) return res.status(400).json({ error: 'Cart is empty' });
 
+  db.get(
+    'SELECT address_line, city, region, postal_code, country, payment_method FROM users WHERE id = ?',
+    [req.user.id],
+    (profileErr, user) => {
+      if (profileErr) return res.status(500).json({ error: profileErr.message });
+
+      const address = String(delivery_address || formatAddress(user || {})).trim();
+      const method = String(payment_method || (user && user.payment_method) || '').trim();
+
+      if (!address) {
+        return res.status(400).json({ error: 'Add a delivery address before checkout' });
+      }
+      if (!method || !paymentOptions.includes(method)) {
+        return res.status(400).json({ error: 'Choose a payment method before checkout' });
+      }
+
+      placeOrder(req, res, { items, total_amount, address, method });
+    }
+  );
+};
+
+function placeOrder(req, res, { items, total_amount, address, method }) {
   const orderId = `APX-2026-${Math.floor(10000 + Math.random() * 90000)}`;
   const trackingCode = `FedEx #FX-${Math.floor(10000 + Math.random() * 90000)}`;
 
@@ -11,8 +34,8 @@ exports.createOrder = (req, res) => {
     db.run('BEGIN TRANSACTION');
 
     db.run(
-      'INSERT INTO orders (id, user_id, total_amount, status, tracking_code) VALUES (?, ?, ?, ?, ?)',
-      [orderId, req.user.id, total_amount, 'Processing', trackingCode],
+      'INSERT INTO orders (id, user_id, total_amount, status, tracking_code, delivery_address, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [orderId, req.user.id, total_amount, 'Processing', trackingCode, address, method],
       function (orderErr) {
         if (orderErr) {
           db.run('ROLLBACK');
@@ -57,7 +80,7 @@ exports.createOrder = (req, res) => {
       }
     );
   });
-};
+}
 
 exports.getUserOrders = (req, res) => {
   const sql =

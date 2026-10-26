@@ -21,7 +21,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## What is included
 
-- Product catalog with search and category filters
+- 16-product catalog with search and category filters
+- Product pages with star ratings and customer feedback
+- Back / Forward buttons plus previous / next item on product pages
 - Cart, checkout, and order history with tracking codes
 - JWT login / register
 - Admin dashboard: inventory, safety-stock alerts, recent orders
@@ -35,6 +37,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | POST | `/api/auth/register` | — |
 | POST | `/api/auth/login` | — |
 | GET | `/api/products` | — |
+| GET | `/api/products/:id` | — |
+| POST | `/api/products/:id/reviews` | JWT |
 | PUT | `/api/products/:id/stock` | Admin JWT |
 | POST | `/api/orders` | JWT |
 | GET | `/api/orders` | JWT |

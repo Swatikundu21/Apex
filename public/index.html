@@ -3,93 +3,335 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ApexCart Enterprise Portal</title>
+  <title>ApexCart</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
+  <!-- Top announcement bar -->
+  <div class="announcement-bar">
+    🚚 Free Shipping on Orders Over $99
+  </div>
+
+  <!-- Main header -->
   <header class="topbar">
-    <div class="brand" onclick="showStore()" style="cursor:pointer">
+    <!-- Left: logo -->
+    <div class="brand" onclick="goTo('#/')" style="cursor:pointer">
       <div class="logo"></div>
-      ApexCart
+      <span>ApexCart</span>
     </div>
-    <input id="search" class="search" placeholder="Search products, categories, SKUs...">
-    <div class="nav-actions">
-      <button class="ghost hidden" id="adminBtn" onclick="showAdmin()">Admin</button>
-      <button class="ghost" onclick="showOrders()">Orders</button>
-      <button class="ghost" id="authBtn" onclick="openAuth(true, 'login')">Account</button>
-      <button class="ghost hidden" id="logoutBtn" onclick="logout()">Logout</button>
-      <button class="btn" onclick="openDrawer(true)">Cart <span class="badge" id="cartCount">0</span></button>
+
+    <!-- Center: nav links -->
+    <nav class="main-nav">
+      <a href="#/" onclick="event.preventDefault();goTo('#/')">Home</a>
+      <a href="#about" onclick="event.preventDefault();openPage('about')">About</a>
+      <a href="#contact" onclick="event.preventDefault();openPage('contact')">Contact</a>
+    </nav>
+
+    <!-- Right: search + actions -->
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input id="search" class="search" placeholder="Search products...">
+        <button class="search-clear hidden" id="searchClear" onclick="clearSearch()" title="Clear search">✕</button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="icon-action" title="Wishlist" onclick="goTo('#/wishlist')">
+          <span class="icon-action-inner">♡<span class="badge" id="wishCount">0</span></span>
+        </button>
+        <button class="icon-action" title="Cart" onclick="openDrawer(true)">
+          <span class="icon-action-inner">🛒<span class="badge" id="cartCount">0</span></span>
+        </button>
+        <button class="icon-action icon-action--user" id="authBtn" onclick="openAuth(true, 'login')">
+          <span>👤</span>
+        </button>
+        <button class="ghost small hidden" id="adminBtn" onclick="goTo('#/admin')">Admin</button>
+        <button class="ghost small hidden" id="logoutBtn" onclick="logout()">Logout</button>
+      </div>
     </div>
+
+    <!-- history nav (hidden visually, still functional) -->
+    <button class="sr-only" id="backBtn" onclick="goBack()">Back</button>
+    <button class="sr-only" id="fwdBtn" onclick="goForward()">Forward</button>
   </header>
 
+  <!-- About page modal -->
+  <div class="page-modal-bg" id="aboutModal" onclick="if(event.target===this)closePage('about')">
+    <div class="page-modal">
+      <button class="page-modal-close" onclick="closePage('about')">✕</button>
+      <div class="page-modal-hero" style="background:linear-gradient(135deg,#ede9fe,#e0e7ff)">
+        <span style="font-size:56px">🛍️</span>
+        <h1>About ApexCart</h1>
+        <p>Premium tech, built for pros.</p>
+      </div>
+      <div class="page-modal-body">
+        <div class="about-grid">
+          <div class="about-stat"><strong>1,200+</strong><span>Happy Customers</span></div>
+          <div class="about-stat"><strong>16+</strong><span>Curated SKUs</span></div>
+          <div class="about-stat"><strong>99%</strong><span>Satisfaction Rate</span></div>
+          <div class="about-stat"><strong>24/7</strong><span>Support</span></div>
+        </div>
+        <h2>Our Story</h2>
+        <p>ApexCart was founded to cut through the noise of the consumer tech market. We hand-pick enterprise-grade hardware — keyboards, peripherals, audio, networking — and make it accessible to teams and individuals who refuse to settle for less.</p>
+        <p>Every SKU on our platform has been tested for build quality, warranty support, and real-world durability. If it's on ApexCart, it's earned its place.</p>
+        <h2>Our Values</h2>
+        <div class="values-grid">
+          <div class="value-card">🎯<strong>Curation over quantity</strong><p>16 great products beat 1,600 mediocre ones.</p></div>
+          <div class="value-card">🔒<strong>Honest pricing</strong><p>No dark patterns. The price you see is the price you pay.</p></div>
+          <div class="value-card">⚡<strong>Fast fulfillment</strong><p>Orders placed before 3 pm ship the same business day.</p></div>
+          <div class="value-card">♻️<strong>30-day returns</strong><p>No questions asked. We stand behind what we sell.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact page modal -->
+  <div class="page-modal-bg" id="contactModal" onclick="if(event.target===this)closePage('contact')">
+    <div class="page-modal">
+      <button class="page-modal-close" onclick="closePage('contact')">✕</button>
+      <div class="page-modal-hero" style="background:linear-gradient(135deg,#e0f2fe,#e0e7ff)">
+        <span style="font-size:56px">📬</span>
+        <h1>Get in Touch</h1>
+        <p>We're here Mon – Fri, 9 am – 6 pm IST.</p>
+      </div>
+      <div class="page-modal-body">
+        <div class="contact-cols">
+          <div class="contact-info">
+            <h2>Contact Info</h2>
+            <div class="contact-item">📧<div><strong>Email</strong><p>support@apexcart.dev</p></div></div>
+            <div class="contact-item">📞<div><strong>Phone</strong><p>+91 98765 43210</p></div></div>
+            <div class="contact-item">📍<div><strong>Office</strong><p>12, Tech Park, Bengaluru, Karnataka 560001</p></div></div>
+            <div class="contact-item">🕐<div><strong>Hours</strong><p>Mon–Fri 9 am – 6 pm IST</p></div></div>
+          </div>
+          <form class="contact-form" onsubmit="submitContact(event)">
+            <h2>Send a Message</h2>
+            <label class="small">Your name</label>
+            <input class="field" id="contactName" placeholder="Jane Smith" required>
+            <label class="small">Email</label>
+            <input class="field" id="contactEmail" type="email" placeholder="jane@example.com" required>
+            <label class="small">Subject</label>
+            <input class="field" id="contactSubject" placeholder="Order issue, product question…">
+            <label class="small">Message</label>
+            <textarea class="field" id="contactMsg" rows="4" placeholder="How can we help?" required></textarea>
+            <button class="btn-primary" type="submit" style="width:100%">Send Message 📨</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="layout">
+
+    <!-- Store home view -->
     <section id="storeView">
-      <div class="hero">
+
+      <!-- Hero carousel (populated by JS) -->
+      <div class="hero-carousel" id="heroCarousel">
+        <div class="hero-slides" id="heroSlides"></div>
+        <div class="hero-carousel-prev" id="heroPrev" onclick="heroNav(-1)">&#8592;</div>
+        <div class="hero-carousel-next" id="heroNext" onclick="heroNav(1)">&#8594;</div>
+        <div class="hero-dots-row" id="heroDots"></div>
+      </div>
+
+      <!-- Category browser -->
+      <div class="section-header">
         <div>
-          <div class="kicker">Enterprise storefront</div>
-          <h1>Precision hardware for teams that ship.</h1>
-          <p class="muted">Live warehouse stock, JWT checkout, and simulated ERP telemetry on every order.</p>
+          <div class="section-kicker">&#127981; Shop by Category</div>
+          <h2>Browse by Category</h2>
         </div>
-        <div>
-          <p class="muted">Demo logins</p>
-          <p><strong>admin@apexcart.com</strong> / admin123</p>
-          <p><strong>alex@example.com</strong> / user123</p>
+        <div class="section-nav">
+          <button class="nav-circle">&#8592;</button>
+          <button class="nav-circle">&#8594;</button>
         </div>
       </div>
-      <div class="filters" id="filters"></div>
+      <div class="category-strip" id="filters"></div>
+
+      <!-- Deal banner -->
+      <div class="deal-banner">
+        <div class="deal-copy">
+          <span class="section-kicker" style="color:#7c5cfc">&#11088; Special Offer</span>
+          <h2>Enhance Your<br>Music Experience</h2>
+          <div class="countdown" id="countdown">
+            <div class="cd-box"><span id="cdDays">16</span><label>Days</label></div>
+            <div class="cd-box"><span id="cdHours">10</span><label>Hours</label></div>
+            <div class="cd-box"><span id="cdMins">56</span><label>Mins</label></div>
+            <div class="cd-box"><span id="cdSecs">54</span><label>Secs</label></div>
+          </div>
+          <button class="btn-primary" onclick="scrollToProducts()">Check it Out →</button>
+        </div>
+        <div class="deal-image">
+          <div class="deal-circle"></div>
+          <img id="dealBannerImg"
+            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"
+            alt="Apex Studio Wireless Headphones"
+            class="deal-product-img">
+        </div>
+      </div>
+
+      <!-- Product grid -->
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">&#11088; Our Collection</div>
+          <h2>Explore Our Best Sellers</h2>
+        </div>
+        <a href="#/" class="view-all" onclick="goTo('#/')">View All Products &#8594;</a>
+      </div>
       <div class="grid" id="productGrid"></div>
-    </section>
 
-    <section id="ordersView" class="hidden">
-      <h2>Account hub</h2>
-      <p class="muted">Self-service tracking and digital order history.</p>
-      <table>
-        <thead><tr><th>Order</th><th>Status</th><th>Total</th><th>Tracking</th></tr></thead>
-        <tbody id="ordersBody"></tbody>
-      </table>
-    </section>
-
-    <section id="adminView" class="hidden">
-      <h2>Merchant admin</h2>
-      <div class="kpi">
-        <div><div class="muted small">Revenue</div><div id="kpiRevenue">$0</div></div>
-        <div><div class="muted small">Orders processed</div><div id="kpiOrders">0</div></div>
-        <div><div class="muted small">Stock alerts</div><div id="kpiAlerts">0</div></div>
+      <!-- Trust badges -->
+      <div class="trust-strip">
+        <div class="trust-item">
+          <span class="trust-icon">&#128666;</span>
+          <div><strong>Free Shipping</strong><p>On orders over $99</p></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">&#8635;</span>
+          <div><strong>30-Day Returns</strong><p>Money back guarantee</p></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">&#128274;</span>
+          <div><strong>Secure Payment</strong><p>100% secure checkout</p></div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">&#128222;</span>
+          <div><strong>24/7 Support</strong><p>Friendly customer support</p></div>
+        </div>
       </div>
-      <h3>Recent transactions</h3>
-      <table>
-        <thead><tr><th>Order ID</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead>
-        <tbody id="adminOrders"></tbody>
-      </table>
-      <h3>Inventory control</h3>
-      <table>
-        <thead><tr><th>Product</th><th>On hand</th><th>Safety stock</th><th>Update</th></tr></thead>
-        <tbody id="adminStock"></tbody>
-      </table>
+
     </section>
+
+    <!-- Product detail view -->
+    <section id="productView" class="hidden">
+      <div class="product-nav">
+        <button class="ghost" onclick="showPrevProduct()">&#8592; Previous</button>
+        <button class="ghost" onclick="showNextProduct()">Next &#8594;</button>
+      </div>
+      <article class="product-hero" id="productDetail"></article>
+      <section class="reviews-block">
+        <h2>Customer Reviews</h2>
+        <p class="muted" id="reviewSummary"></p>
+        <form id="reviewForm" class="review-form" onsubmit="submitReview(event)">
+          <label class="small">Your rating</label>
+          <div class="star-picker" id="starPicker"></div>
+          <textarea class="field" id="reviewComment" rows="3" placeholder="Share your experience..."></textarea>
+          <button class="btn-primary" type="submit">Post Review</button>
+        </form>
+        <div id="reviewList"></div>
+      </section>
+    </section>
+
+    <!-- Wishlist view -->
+    <section id="wishlistView" class="hidden">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">&#9825; Saved Items</div>
+          <h2>My Wishlist</h2>
+        </div>
+      </div>
+      <div class="grid" id="wishlistGrid"></div>
+    </section>
+
+    <!-- Orders / Account view -->
+    <section id="ordersView" class="hidden">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">&#128100; My Account</div>
+          <h2>Account Hub</h2>
+        </div>
+      </div>
+      <form class="account-card" onsubmit="saveAccount(event)">
+        <h3>Delivery Address</h3>
+        <label class="small">Street</label>
+        <input class="field" id="addrLine" placeholder="Street address">
+        <div class="form-grid">
+          <div><label class="small">City</label><input class="field" id="addrCity" placeholder="City"></div>
+          <div><label class="small">State</label><input class="field" id="addrRegion" placeholder="TX"></div>
+          <div><label class="small">Postal code</label><input class="field" id="addrPostal" placeholder="78701"></div>
+          <div><label class="small">Country</label><input class="field" id="addrCountry" placeholder="United States"></div>
+        </div>
+        <h3>Payment Method</h3>
+        <select class="field" id="payMethod"></select>
+        <button class="btn-primary" type="submit">Save Details</button>
+      </form>
+      <h3>Order History</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order</th><th>Status</th><th>Total</th><th>Ship to</th><th>Payment</th><th>Tracking</th></tr></thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Admin view -->
+    <section id="adminView" class="hidden">
+      <div class="section-header">
+        <div>
+          <div class="section-kicker">&#9881; Merchant</div>
+          <h2>Admin Dashboard</h2>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-card"><div class="muted small">Revenue</div><div id="kpiRevenue" class="kpi-value">$0</div></div>
+        <div class="kpi-card"><div class="muted small">Orders processed</div><div id="kpiOrders" class="kpi-value">0</div></div>
+        <div class="kpi-card"><div class="muted small">Stock alerts</div><div id="kpiAlerts" class="kpi-value">0</div></div>
+      </div>
+      <h3>Recent Transactions</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Ship to</th><th>Payment</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody id="adminOrders"></tbody>
+        </table>
+      </div>
+      <h3>Inventory Control</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>On hand</th><th>Safety stock</th><th>Update</th></tr></thead>
+          <tbody id="adminStock"></tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
+  <!-- Cart drawer -->
   <div class="drawer" id="cartDrawer" onclick="if(event.target===this)openDrawer(false)">
     <aside class="panel">
-      <div class="row"><h2>Cart</h2><button class="ghost" onclick="openDrawer(false)">Close</button></div>
+      <div class="row"><h2>Shopping Cart</h2><button class="ghost" onclick="openDrawer(false)">&#10005;</button></div>
       <div id="cartItems"></div>
-      <div class="row"><strong>Total</strong><strong id="cartTotal">$0.00</strong></div>
-      <button class="btn" style="width:100%;margin-top:16px" onclick="checkout()">Checkout</button>
+      <div class="checkout-fields">
+        <h3>Delivery Address</h3>
+        <input class="field" id="cartAddrLine" placeholder="Street address">
+        <input class="field" id="cartAddrCity" placeholder="City">
+        <div class="form-grid two">
+          <input class="field" id="cartAddrRegion" placeholder="State">
+          <input class="field" id="cartAddrPostal" placeholder="Postal code">
+        </div>
+        <input class="field" id="cartAddrCountry" placeholder="Country">
+        <h3>Payment Method</h3>
+        <select class="field" id="cartPayMethod"></select>
+      </div>
+      <div class="row cart-total-row"><strong>Total</strong><strong id="cartTotal">$0.00</strong></div>
+      <button class="btn-primary" style="width:100%;margin-top:16px" onclick="checkout()">Checkout</button>
     </aside>
   </div>
 
+  <!-- Auth modal -->
   <div class="modal-bg" id="authModal" onclick="if(event.target===this)openAuth(false)">
     <form class="modal" onsubmit="submitAuth(event)">
       <h2 id="authTitle">Sign in</h2>
       <input class="field hidden" id="authName" placeholder="Full name">
       <input class="field" id="authEmail" type="email" placeholder="Email" required>
       <input class="field" id="authPassword" type="password" placeholder="Password" required>
-      <button class="btn" id="authSubmit" data-mode="login" style="width:100%">Continue</button>
-      <p class="small muted">Need an account? <a href="#" onclick="event.preventDefault();openAuth(true,'register')">Register</a></p>
+      <button class="btn-primary" id="authSubmit" data-mode="login" style="width:100%">Continue</button>
+      <p class="small muted" style="text-align:center;margin-top:12px">
+        Need an account? <a href="#" onclick="event.preventDefault();openAuth(true,'register')">Register</a>
+      </p>
     </form>
   </div>
+
   <div class="toast" id="toast"></div>
   <script src="/app.js"></script>
 </body>

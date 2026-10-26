@@ -18,7 +18,21 @@ exports.register = async (req, res) => {
     db.run(sql, [userId, name, email, hashedPassword, 'customer'], function (err) {
       if (err) return res.status(400).json({ error: 'Email already registered' });
       const token = jwt.sign({ id: userId, email, role: 'customer' }, JWT_SECRET, { expiresIn: '24h' });
-      res.json({ token, user: { id: userId, name, email, role: 'customer' } });
+      res.json({
+        token,
+        user: {
+          id: userId,
+          name,
+          email,
+          role: 'customer',
+          address_line: '',
+          city: '',
+          region: '',
+          postal_code: '',
+          country: 'United States',
+          payment_method: ''
+        }
+      });
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -39,7 +53,18 @@ exports.login = (req, res) => {
     );
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        address_line: user.address_line || '',
+        city: user.city || '',
+        region: user.region || '',
+        postal_code: user.postal_code || '',
+        country: user.country || 'United States',
+        payment_method: user.payment_method || ''
+      }
     });
   });
 };
